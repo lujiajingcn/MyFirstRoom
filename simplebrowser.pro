@@ -7,6 +7,8 @@ HEADERS += \
     browserwindow.h \
     downloadmanagerwidget.h \
     downloadwidget.h \
+    jscontext.h \
+    maindialog.h \
     tabwidget.h \
     webpage.h \
     webpopupwindow.h \
@@ -17,7 +19,9 @@ SOURCES += \
     browserwindow.cpp \
     downloadmanagerwidget.cpp \
     downloadwidget.cpp \
+    jscontext.cpp \
     main.cpp \
+    maindialog.cpp \
     tabwidget.cpp \
     webpage.cpp \
     webpopupwindow.cpp \
@@ -25,6 +29,7 @@ SOURCES += \
 
 FORMS += \
     certificateerrordialog.ui \
+    maindialog.ui \
     passworddialog.ui \
     downloadmanagerwidget.ui \
     downloadwidget.ui

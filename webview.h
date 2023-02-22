@@ -53,6 +53,8 @@
 
 #include <QIcon>
 #include <QWebEngineView>
+#include "jscontext.h"
+#include <QWebChannel>
 
 class WebPage;
 
@@ -67,6 +69,7 @@ public:
     int loadProgress() const;
     bool isWebActionEnabled(QWebEnginePage::WebAction webAction) const;
     QIcon favIcon() const;
+    void injectJs(QString sJsScript);
 
 protected:
     void contextMenuEvent(QContextMenuEvent *event) override;
@@ -76,11 +79,19 @@ signals:
     void webActionEnabledChanged(QWebEnginePage::WebAction webAction, bool enabled);
     void favIconChanged(const QIcon &icon);
     void devToolsRequested(QWebEnginePage *source);
+    void sigShowSelectText(QString sSelectText);
+
+public slots:
+    void slotShowSelectText(QString sSelectText);
 
 private:
     void createWebActionTrigger(QWebEnginePage *page, QWebEnginePage::WebAction);
 
+    void slotOnLoadFinished();
+
 private:
+    JsContext       *m_jsContext;
+    QWebChannel     *m_webChannel;
     int m_loadProgress;
 };
 

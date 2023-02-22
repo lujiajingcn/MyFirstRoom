@@ -75,7 +75,7 @@ BrowserWindow *Browser::createWindow(bool offTheRecord)
     QObject::connect(mainWindow, &QObject::destroyed, [this, mainWindow]() {
         m_windows.removeOne(mainWindow);
     });
-    mainWindow->show();
+//    mainWindow->show();
     return mainWindow;
 }
 
