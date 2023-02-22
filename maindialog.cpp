@@ -51,7 +51,7 @@ MainDialog::~MainDialog()
 
 void MainDialog::on_pushButton_clicked()
 {
-    QFile file1("../simplebrowser/static/selectelement.js");
+    QFile file1("../WebCollector/static/selectelement.js");
     if (file1.open(QIODevice::ReadOnly))
     {
         QString content = file1.readAll();

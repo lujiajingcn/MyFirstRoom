@@ -1,5 +1,5 @@
 TEMPLATE = app
-TARGET = simplebrowser
+TARGET = WebCollector
 QT += webenginewidgets
 
 HEADERS += \

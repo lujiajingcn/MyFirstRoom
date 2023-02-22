@@ -219,7 +219,7 @@ void WebView::contextMenuEvent(QContextMenuEvent *event)
 
 void WebView::slotOnLoadFinished()
 {
-    QFile file1("../simplebrowser/static/qwebchannel.js");
+    QFile file1("../WebCollector/static/qwebchannel.js");
     if (file1.open(QIODevice::ReadOnly))
     {
         QString content = file1.readAll();
@@ -227,7 +227,7 @@ void WebView::slotOnLoadFinished()
         page()->runJavaScript(content);
     }
 
-    QFile file("../simplebrowser/static/msgutils.js");
+    QFile file("../WebCollector/static/msgutils.js");
     if (file.open(QIODevice::ReadOnly))
     {
         QString content = file.readAll();
