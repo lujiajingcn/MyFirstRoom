@@ -75,8 +75,6 @@ WebView::WebView(QWidget *parent)
     connect(this, &QWebEngineView::loadFinished, [this](bool success) {
         m_loadProgress = success ? 100 : -1;
         emit favIconChanged(favIcon());
-
-        slotOnLoadFinished();
     });
     connect(this, &QWebEngineView::iconChanged, [this](const QIcon &) {
         emit favIconChanged(favIcon());
@@ -115,17 +113,6 @@ void WebView::setPage(WebPage *page)
     createWebActionTrigger(page,QWebEnginePage::Stop);
     QWebEngineView::setPage(page);
 
-    m_jsContext = new JsContext(this);
-    m_webChannel = new QWebChannel(this);
-    m_webChannel->registerObject("context", m_jsContext);
-    page->setWebChannel(m_webChannel);
-    connect(m_jsContext, &JsContext::recvdMsg, this, &WebView::slotShowSelectText);
-
-}
-
-void WebView::slotShowSelectText(QString sSelectText)
-{
-    emit sigShowSelectText(sSelectText);
 }
 
 int WebView::loadProgress() const
@@ -162,12 +149,6 @@ QIcon WebView::favIcon() const
         static QIcon defaultIcon(QStringLiteral(":text-html.png"));
         return defaultIcon;
     }
-}
-
-void WebView::injectJs(QString sJsScript)
-{
-    qDebug()<<sJsScript;
-    page()->runJavaScript(sJsScript);
 }
 
 QWebEngineView *WebView::createWindow(QWebEnginePage::WebWindowType type)
@@ -215,24 +196,4 @@ void WebView::contextMenuEvent(QContextMenuEvent *event)
         (*inspectElement)->setText(tr("Inspect element"));
     }
     menu->popup(event->globalPos());
-}
-
-void WebView::slotOnLoadFinished()
-{
-    QFile file1("../WebCollector/static/qwebchannel.js");
-    if (file1.open(QIODevice::ReadOnly))
-    {
-        QString content = file1.readAll();
-        file1.close();
-        page()->runJavaScript(content);
-    }
-
-    QFile file("../WebCollector/static/msgutils.js");
-    if (file.open(QIODevice::ReadOnly))
-    {
-        QString content = file.readAll();
-        file.close();
-        page()->runJavaScript(content);
-    }
-
 }

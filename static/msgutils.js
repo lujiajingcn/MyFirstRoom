@@ -1,5 +1,5 @@
 var context;
-// 初始化
+
 function init()
 {
     if (typeof qt != 'undefined')
@@ -15,7 +15,7 @@ function init()
         alert("qt对象获取失败！");
     }
 }
-// 向qt发送消息
+
 function sendMessage(msg)
 {
     if(typeof context == 'undefined')
@@ -28,16 +28,4 @@ function sendMessage(msg)
     }
 }
 
-// 接收qt发送的消息
-function recvMessage(msg)
-{
-    alert("接收到Qt发送的消息：" + msg);
-}
-
-// 控件控制函数
-function onBtnSendMsg()
-{
-    var cmd = document.getElementById("待发送消息").value;
-    sendMessage(cmd);   
-}
 init();

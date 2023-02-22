@@ -39,6 +39,8 @@ MainDialog::MainDialog(QWidget *parent) :
     ui->widget->setLayout(lyt);
     m_window->tabWidget()->setUrl(url);
 
+    readJavascript();
+
     connect(m_window->tabWidget()->currentWebView(), &WebView::sigShowSelectText, this, &MainDialog::slotShowSelectText);
 }
 
@@ -49,15 +51,40 @@ MainDialog::~MainDialog()
     delete m_window;
 }
 
+void MainDialog::readJavascript()
+{
+    QFile file("../WebCollector/static/qwebchannel.js");
+    if (file.open(QIODevice::ReadOnly))
+    {
+        m_sJavascript = file.readAll();
+        file.close();
+    }
+
+    file.setFileName("../WebCollector/static/selectelement.js");
+    if (file.open(QIODevice::ReadOnly))
+    {
+        m_sJavascript += file.readAll();
+        file.close();
+    }
+
+    file.setFileName("../WebCollector/static/msgutils.js");
+    if (file.open(QIODevice::ReadOnly))
+    {
+        m_sJavascript += file.readAll();
+        file.close();
+    }
+}
+
 void MainDialog::on_pushButton_clicked()
 {
-    QFile file1("../WebCollector/static/selectelement.js");
-    if (file1.open(QIODevice::ReadOnly))
-    {
-        QString content = file1.readAll();
-        file1.close();
-        m_window->tabWidget()->currentWebView()->injectJs(content);
-    }
+    m_jsContext = new JsContext(this);
+    m_webChannel = new QWebChannel(this);
+    m_webChannel->registerObject("context", m_jsContext);
+    m_window->tabWidget()->currentWebView()->page()->setWebChannel(m_webChannel);
+    connect(m_jsContext, &JsContext::recvdMsg, this, &MainDialog::slotShowSelectText);
+
+    m_window->tabWidget()->currentWebView()->page()->runJavaScript(m_sJavascript);
+
 }
 
 void MainDialog::slotShowSelectText(QString sSelectText)
