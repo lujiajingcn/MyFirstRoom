@@ -153,7 +153,7 @@ QIcon WebView::favIcon() const
 
 QWebEngineView *WebView::createWindow(QWebEnginePage::WebWindowType type)
 {
-    BrowserWindow *mainWindow = qobject_cast<MainDialog*>(window())->m_window;
+    BrowserWindow *mainWindow = qobject_cast<MainDialog*>(window())->GetBrowserWindow();
     if (!mainWindow)
         return nullptr;
 

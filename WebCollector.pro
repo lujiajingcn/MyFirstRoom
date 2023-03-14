@@ -5,6 +5,7 @@ QT += webenginewidgets
 HEADERS += \
     browser.h \
     browserwindow.h \
+    commonheader.h \
     downloadmanagerwidget.h \
     downloadwidget.h \
     jscontext.h \

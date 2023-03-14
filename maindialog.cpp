@@ -33,22 +33,32 @@ MainDialog::MainDialog(QWidget *parent) :
     QUrl url = commandLineUrlArgument();
 
     Browser browser;
-    m_window = browser.createWindow();
+    m_browserWindow = browser.createWindow();
     QHBoxLayout *lyt = new QHBoxLayout;
-    lyt->addWidget(m_window);
+    lyt->addWidget(m_browserWindow);
     ui->widget->setLayout(lyt);
-    m_window->tabWidget()->setUrl(url);
+    m_browserWindow->tabWidget()->setUrl(url);
 
     readJavascript();
 
-    connect(m_window->tabWidget()->currentWebView(), &WebView::sigShowSelectText, this, &MainDialog::slotShowSelectText);
+    connect(m_browserWindow->tabWidget()->currentWebView(), &WebView::sigShowSelectText, this, &MainDialog::slotShowSelectText);
 }
 
 MainDialog::~MainDialog()
 {
     delete ui;
-    m_window->close();
-    delete m_window;
+    m_browserWindow->close();
+    delete m_browserWindow;
+}
+
+BrowserWindow *MainDialog::GetBrowserWindow()
+{
+    return m_browserWindow;
+}
+
+void MainDialog::closeEvent(QCloseEvent *event)
+{
+    m_browserWindow->close();
 }
 
 void MainDialog::readJavascript()
@@ -75,19 +85,29 @@ void MainDialog::readJavascript()
     }
 }
 
-void MainDialog::on_pushButton_clicked()
+void MainDialog::slotShowSelectText(QString sSelectText)
+{
+    ui->textEdit->setText(sSelectText);
+}
+
+void MainDialog::on_rbCollect_clicked()
 {
     m_jsContext = new JsContext(this);
     m_webChannel = new QWebChannel(this);
     m_webChannel->registerObject("context", m_jsContext);
-    m_window->tabWidget()->currentWebView()->page()->setWebChannel(m_webChannel);
+    m_browserWindow->tabWidget()->currentWebView()->page()->setWebChannel(m_webChannel);
     connect(m_jsContext, &JsContext::recvdMsg, this, &MainDialog::slotShowSelectText);
 
-    m_window->tabWidget()->currentWebView()->page()->runJavaScript(m_sJavascript);
-
+    m_browserWindow->tabWidget()->currentWebView()->page()->runJavaScript(m_sJavascript);
+    m_nRunType = RUNTYPE::COLLECT;
 }
 
-void MainDialog::slotShowSelectText(QString sSelectText)
+void MainDialog::on_rbBrowse_clicked()
 {
-    ui->textEdit->setText(sSelectText);
+    delete m_jsContext;
+    delete m_webChannel;
+
+    QString sCurUrl = m_browserWindow->tabWidget()->currentWebView()->page()->url().toString();
+    m_browserWindow->tabWidget()->currentWebView()->page()->load(sCurUrl);
+    m_nRunType = RUNTYPE::BROWSE;
 }

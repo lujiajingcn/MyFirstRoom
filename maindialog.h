@@ -5,6 +5,7 @@
 #include "browserwindow.h"
 #include "jscontext.h"
 #include <QWebChannel>
+#include "commonheader.h"
 
 namespace Ui {
 class MainDialog;
@@ -16,22 +17,30 @@ class MainDialog : public QDialog
 
 public:
     explicit MainDialog(QWidget *parent = nullptr);
-    ~MainDialog();
+    ~MainDialog() override;
 
+    BrowserWindow *GetBrowserWindow();
+protected:
+    void closeEvent(QCloseEvent *event) override;
 
-    BrowserWindow *m_window;
 private slots:
-    void on_pushButton_clicked();
     void slotShowSelectText(QString sSelectText);
+
+    void on_rbCollect_clicked();
+
+    void on_rbBrowse_clicked();
 
 private:
     void readJavascript();
 
 private:
+    BrowserWindow   *m_browserWindow;
 
     JsContext       *m_jsContext;
     QWebChannel     *m_webChannel;
     QString         m_sJavascript;
+
+    RUNTYPE         m_nRunType;
 
     Ui::MainDialog *ui;
 };

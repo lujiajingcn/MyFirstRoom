@@ -1,0 +1,9 @@
+#ifndef COMMONHEADER_H
+#define COMMONHEADER_H
+
+enum RUNTYPE{
+    BROWSE,
+    COLLECT
+};
+
+#endif // COMMONHEADER_H
