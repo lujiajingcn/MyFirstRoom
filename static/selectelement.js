@@ -28,5 +28,6 @@ function remove_hightlight(element){
 window.onmousemove = track_mouse
 
 document.onclick = function(){
-	sendMessage(last_element.innerHTML);
+	var s_json = parase_template(last_element);
+	sendMessage(s_json);
 };

@@ -7,6 +7,7 @@
 #include "webview.h"
 #include "tabwidget.h"
 #include <QFile>
+#include <QDir>
 
 QUrl commandLineUrlArgument()
 {
@@ -15,7 +16,8 @@ QUrl commandLineUrlArgument()
         if (!arg.startsWith(QLatin1Char('-')))
             return QUrl::fromUserInput(arg);
     }
-    return QUrl(QStringLiteral("https://www.baidu.com"));
+//    return QUrl(QStringLiteral("https://www.baidu.com"));
+    return QUrl(QStringLiteral("https://www.weibo.com"));
 }
 
 MainDialog::MainDialog(QWidget *parent) :
@@ -42,6 +44,9 @@ MainDialog::MainDialog(QWidget *parent) :
     readJavascript();
 
     connect(m_browserWindow->tabWidget()->currentWebView(), &WebView::sigShowSelectText, this, &MainDialog::slotShowSelectText);
+
+    ui->cbParseTemplate->addItem("");
+    readParseTemplate();
 }
 
 MainDialog::~MainDialog()
@@ -49,6 +54,25 @@ MainDialog::~MainDialog()
     delete ui;
     m_browserWindow->close();
     delete m_browserWindow;
+}
+
+void MainDialog::readParseTemplate()
+{
+    QString sAppDirPath = QCoreApplication::applicationDirPath();
+    QDir dir(sAppDirPath + "/parsetemplate");
+    dir.setFilter(QDir::Files | QDir::NoSymLinks);
+    QFileInfoList list = dir.entryInfoList();
+    QFile file;
+    for(auto it = list.begin(); it != list.end(); it++)
+    {
+        QString sName = it->fileName();
+        file.setFileName(it->filePath());
+        file.open(QIODevice::ReadOnly);
+        QString sJavascript(file.readAll());
+        sName = sName.left(sName.length()-3);
+        m_mapParseTemplate.insert(sName, sJavascript);
+        ui->cbParseTemplate->addItem(sName);
+    }
 }
 
 BrowserWindow *MainDialog::GetBrowserWindow()
@@ -110,4 +134,10 @@ void MainDialog::on_rbBrowse_clicked()
     QString sCurUrl = m_browserWindow->tabWidget()->currentWebView()->page()->url().toString();
     m_browserWindow->tabWidget()->currentWebView()->page()->load(sCurUrl);
     m_nRunType = RUNTYPE::BROWSE;
+}
+
+void MainDialog::on_cbParseTemplate_activated(const QString &arg1)
+{
+    QString sJavascript = m_mapParseTemplate.find(arg1).value();
+    m_browserWindow->tabWidget()->currentWebView()->page()->runJavaScript(sJavascript);
 }

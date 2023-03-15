@@ -18,6 +18,7 @@ class MainDialog : public QDialog
 public:
     explicit MainDialog(QWidget *parent = nullptr);
     ~MainDialog() override;
+    void readParseTemplate();
 
     BrowserWindow *GetBrowserWindow();
 protected:
@@ -30,17 +31,21 @@ private slots:
 
     void on_rbBrowse_clicked();
 
+    void on_cbParseTemplate_activated(const QString &arg1);
+
 private:
     void readJavascript();
 
 private:
-    BrowserWindow   *m_browserWindow;
+    BrowserWindow           *m_browserWindow;
 
-    JsContext       *m_jsContext;
-    QWebChannel     *m_webChannel;
-    QString         m_sJavascript;
+    JsContext               *m_jsContext;
+    QWebChannel             *m_webChannel;
+    QString                 m_sJavascript;
 
-    RUNTYPE         m_nRunType;
+    RUNTYPE                 m_nRunType;
+
+    QMap<QString, QString>  m_mapParseTemplate;
 
     Ui::MainDialog *ui;
 };
